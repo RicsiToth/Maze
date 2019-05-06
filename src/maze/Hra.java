@@ -12,102 +12,26 @@ public class Hra {
     private int columns;
     private int floors;
     private ArrayList<ArrayList<ArrayList<Label>>> labels;
+    private SelectedTool status;
     
-    private boolean search;
-    private boolean addWall;
-    private boolean addRandomWalls;
-    private boolean removeWall;
-    private boolean addShaft;
-    private boolean addShaftToNextFloor;
-    private boolean removeShaft;
-    private boolean removeShaftFromFloor;
-    private boolean resetVisited;
-    private boolean resetFloor;
+    private enum SelectedTool{
+        SEARCH,
+        ADDWALL,
+        ADDRANDOMWALLS,
+        REMOVEWALL,
+        ADDSHAFT,
+        ADDSHAFTTONEXTFLOOR,
+        REMOVESHAFT,
+        REMOVESHAFTFROMFLOOR,
+        RESETVISITED,
+        RESETFLOOR,
+    }
     
-    /**volam sa richard :)*/
-     
-    private ContextMenu tools;
-    private MenuItem cmiSearch;
-    private MenuItem cmiAddWall;
-    private MenuItem cmiAddRandomWalls;
-    private MenuItem cmiRemoveWall;
-    private MenuItem cmiAddShaft;
-    private MenuItem cmiAddShaftToNextFloor;
-    private MenuItem cmiRemoveShaft;
-    private MenuItem cmiRemoveShaftFromFloor;
-    private MenuItem cmiResetVisited;
-    private MenuItem cmiResetFloor;
-    
-    public Hra(int rows, int columns, int floors, ArrayList<String> string){
+    public Hra(int rows, int columns, int floors, ArrayList<String> string, ContextMenu tools){
         this.rows = rows;
         this.columns = columns;
         this.floors = floors;
         labels = new ArrayList<>();
-        
-        tools = new ContextMenu();
-        cmiSearch = new MenuItem("Search");
-        cmiSearch.setOnAction((ActionEvent) -> {
-            clear();
-            cmiSearch.setDisable(true);
-            search = true;
-        });
-        cmiAddWall = new MenuItem("Add Wall");
-        cmiAddWall.setOnAction((ActionEvent) -> {
-            clear();
-            cmiAddWall.setDisable(true);
-            addWall = true;
-        });
-        cmiAddRandomWalls = new MenuItem("Add Random Wall");
-        cmiAddRandomWalls.setOnAction((ActionEvent) -> {
-            clear();
-            cmiAddRandomWalls.setDisable(true);
-            addRandomWalls = true;
-        });
-        cmiRemoveWall = new MenuItem("Remove Wall");
-        cmiRemoveWall.setOnAction((ActionEvent) -> {
-            clear();
-            cmiRemoveWall.setDisable(true);
-            removeWall = true;
-        });
-        cmiAddShaft = new MenuItem("Add Shaft");
-        cmiAddShaft.setOnAction((ActionEvent) -> {
-            clear();
-            cmiAddShaft.setDisable(true);
-            addShaft = true;
-        });
-        cmiAddShaftToNextFloor = new MenuItem("Add Shaft To Next Floor");
-        cmiAddShaftToNextFloor.setOnAction((ActionEvent) -> {
-            clear();
-            cmiAddShaftToNextFloor.setDisable(true);
-            addShaftToNextFloor = true;
-        });
-        cmiRemoveShaft = new MenuItem("Remove Shaft");
-        cmiRemoveShaft.setOnAction((ActionEvent) -> {
-            clear();
-            cmiRemoveShaft.setDisable(true);
-            removeShaft = true;
-        });
-        cmiRemoveShaftFromFloor = new MenuItem("Remove Shaft From Floor");
-        cmiRemoveShaftFromFloor.setOnAction((ActionEvent) -> {
-            clear();
-            cmiRemoveShaftFromFloor.setDisable(true);
-            removeShaftFromFloor = true;
-        });
-        cmiResetVisited = new MenuItem("Reset Visited");
-        cmiResetVisited.setOnAction((ActionEvent) -> {
-            clear();
-            cmiResetVisited.setDisable(true);
-            resetVisited = true;
-        });
-        cmiResetFloor = new MenuItem("Reset Floor");
-        cmiResetFloor.setOnAction((ActionEvent) -> {
-            clear();
-            cmiResetFloor.setDisable(true);
-            resetFloor = true;
-        });
-        tools.getItems().addAll(cmiSearch, cmiAddWall, cmiAddRandomWalls, 
-                cmiRemoveWall, cmiAddShaft, cmiAddShaftToNextFloor, cmiRemoveShaft, 
-                cmiRemoveShaftFromFloor, cmiResetVisited, cmiResetFloor);
         
         int index = 0;
         for(int i = 0; i < this.floors; i++){
@@ -135,43 +59,45 @@ public class Hra {
                     label.setOnMouseClicked((ActionEvent) -> {
                         MouseButton btn = ActionEvent.getButton();
                         if(btn == MouseButton.PRIMARY){
-                            if(search){
-                                colourIt(floor, row, column);
-                            }
-                            if(addShaft){
-                                placeShaft(row, column);
-                            }
-                            if(addShaftToNextFloor){
-                                addShaftToNextFloor(row, column, floor);
-                            }
-                            if(removeShaft){
-                                if(label.getId().equals("Shaft")){
-                                    removeShaft(row, column);
-                                }
-                            }
-                            if(removeShaftFromFloor){
-                                if(label.getId().equals("Shaft")){
-                                    label.setId("Free");
-                                }
-                            }
-                            if(addRandomWalls){
-                                generateWalls(floor);
-                            }
-                            if(addWall){
-                                if(!label.getId().equals("Shaft")){
-                                    label.setId("Wall");
-                                }
-                            }
-                            if(removeWall){
-                                if(label.getId().equals("Wall")){
-                                    label.setId("Free");
-                                }
-                            }
-                            if(resetVisited){
-                                resetVisited(floor);
-                            }
-                            if(resetFloor){
-                                resetFloor(floor);
+                            switch(status){
+                                case SEARCH:
+                                    colourIt(floor, row, column);
+                                    break;
+                                case ADDWALL:
+                                    if(!label.getId().equals("Shaft")){
+                                        label.setId("Wall");
+                                    }
+                                    break;
+                                case ADDRANDOMWALLS:
+                                    generateWalls(floor);
+                                    break;
+                                case REMOVEWALL:
+                                    if(label.getId().equals("Wall")){
+                                        label.setId("Free");
+                                    }
+                                    break;
+                                case ADDSHAFT:
+                                    placeShaft(row, column);
+                                    break;
+                                case ADDSHAFTTONEXTFLOOR:
+                                    addShaftToNextFloor(row, column, floor);
+                                    break;
+                                case REMOVESHAFT:
+                                    if(label.getId().equals("Shaft")){
+                                        removeShaft(row, column);
+                                    }
+                                    break;
+                                case REMOVESHAFTFROMFLOOR:
+                                    if(label.getId().equals("Shaft")){
+                                        label.setId("Free");
+                                    }
+                                    break;
+                                case RESETVISITED:
+                                    resetVisited();
+                                    break;
+                                case RESETFLOOR:
+                                    resetFloor(floor);
+                                    break;
                             }
                         }
                     });
@@ -180,30 +106,7 @@ public class Hra {
             }
         }
     }
-    
-    private void clear(){
-        search = false;
-        cmiSearch.setDisable(false);
-        addWall = false;
-        cmiAddWall.setDisable(false);
-        addRandomWalls = false;
-        cmiAddRandomWalls.setDisable(false);
-        removeWall = false;
-        cmiRemoveWall.setDisable(false);
-        addShaft = false;
-        cmiAddShaft.setDisable(false);
-        addShaftToNextFloor = false;
-        cmiAddShaftToNextFloor.setDisable(false);
-        removeShaft = false;
-        cmiRemoveShaft.setDisable(false);
-        removeShaftFromFloor = false;
-        cmiRemoveShaftFromFloor.setDisable(false);
-        resetVisited = false;
-        cmiResetVisited.setDisable(false);
-        resetFloor = false;
-        cmiResetFloor.setDisable(false);
-    }
-    
+   
     private void colourIt(int floor, int row, int column){
         if(labels.get(floor).get(row).get(column).getId().equals("Visited")){
             return;
@@ -298,11 +201,13 @@ public class Hra {
         }
     }
     
-    private void resetVisited(int floor){
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < columns; j++){
-                if(labels.get(floor).get(i).get(j).getId().equals("Visited")){
-                    labels.get(floor).get(i).get(j).setId("Free");
+    private void resetVisited(){
+        for(int i = 0; i < floors; i++){
+            for(int j = 0; j < rows; j++){
+                for(int k = 0; k < columns; k++){
+                    if(labels.get(i).get(j).get(k).getId().equals("Visited")){
+                        labels.get(i).get(j).get(k).setId("Free");
+                    }
                 }
             }
         }
@@ -340,62 +245,42 @@ public class Hra {
     }
     
     public void setSearch(){
-        clear();
-        cmiSearch.setDisable(true);
-        search = true;
+        status = SelectedTool.SEARCH;
     }
     
     public void setAddWall(){
-        clear();
-        cmiAddWall.setDisable(true);
-        addWall = true;
+        status = SelectedTool.ADDWALL;
     }
     
     public void setAddRandomWalls(){
-        clear();
-        cmiAddRandomWalls.setDisable(true);
-        addRandomWalls = true;
+        status = SelectedTool.ADDRANDOMWALLS;
     }
     
     public void setRemoveWall(){
-        clear();
-        cmiRemoveWall.setDisable(true);
-        removeWall = true;
+        status = SelectedTool.REMOVEWALL;
     }
     
     public void setAddShaft(){
-        clear();
-        cmiAddShaft.setDisable(true);
-        addShaft = true;
+        status = SelectedTool.ADDSHAFT;
     }
     
     public void setAddShaftToNextFloor(){
-        clear();
-        cmiAddShaftToNextFloor.setDisable(true);
-        addShaftToNextFloor = true;
+        status = SelectedTool.ADDSHAFTTONEXTFLOOR;
     }
     
     public void setRemoveShaft(){
-        clear();
-        cmiRemoveShaft.setDisable(true);
-        removeShaft = true;
+        status = SelectedTool.REMOVESHAFT;
     }
     
     public void setRemoveShaftFromFloor(){
-        clear();
-        cmiRemoveShaftFromFloor.setDisable(true);
-        removeShaftFromFloor = true;
+        status = SelectedTool.REMOVESHAFTFROMFLOOR;
     }
     
     public void setResetVisited(){
-        clear();
-        cmiResetVisited.setDisable(true);
-        resetVisited = true;
+        status = SelectedTool.RESETVISITED;
     }
     
     public void setResetFloor(){
-        clear();
-        cmiResetFloor.setDisable(true);
-        resetFloor = true;
+        status = SelectedTool.RESETFLOOR;
     }
 }
