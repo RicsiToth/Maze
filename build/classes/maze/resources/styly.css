@@ -1,0 +1,38 @@
+VBox{
+    -fx-background-color: Grey;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+GridPane{
+    -fx-background-color: Grey;
+    -fx-hgap: 1px;
+    -fx-vgap: 1px;
+}
+#Free{
+    -fx-background-color: white;
+    -fx-pref-width: 25px;
+    -fx-pref-height: 25px;
+}                
+#Visited{
+    -fx-background-color: blue;
+    -fx-pref-width: 25px;
+    -fx-pref-height: 25px;
+}
+#Shaft{
+    -fx-background-color: yellow;
+    -fx-pref-width: 25px;
+    -fx-pref-height: 25px;
+}
+#Wall{
+    -fx-background-color: red;
+    -fx-pref-width: 25px;
+    -fx-pref-height: 25px;
+}
+Button{
+    -fx-pref-width: 50px;
+    -fx-pref-height: 40px;
+    -fx-background-color: white;
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+}
