@@ -24,6 +24,8 @@ public class Hra {
     private boolean resetVisited;
     private boolean resetFloor;
     
+    /**volam sa richard :)*/
+     
     private ContextMenu tools;
     private MenuItem cmiSearch;
     private MenuItem cmiAddWall;
