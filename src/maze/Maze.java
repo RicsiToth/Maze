@@ -16,6 +16,7 @@ public class Maze extends Application{
     private Scene scene;
     private GridPane gridPane;
     private Hra hra;
+    private MenuBar menuBar;
     
     private Menu game; 
     private MenuItem newG;
@@ -35,11 +36,23 @@ public class Maze extends Application{
     private MenuItem resetVisited;
     private MenuItem resetFloor;
     
+    private ContextMenu cmTools;
+    private MenuItem cmiSearch;
+    private MenuItem cmiAddWall;
+    private MenuItem cmiAddRandomWalls;
+    private MenuItem cmiRemoveWall;
+    private MenuItem cmiAddShaft;
+    private MenuItem cmiAddShaftToNextFloor;
+    private MenuItem cmiRemoveShaft;
+    private MenuItem cmiRemoveShaftFromFloor;
+    private MenuItem cmiResetVisited;
+    private MenuItem cmiResetFloor;
+    
     public void newGame(){
         NewGame dialog = new NewGame();
         dialog.showNewGame();
         if(dialog.isCreated()){
-            hra = new Hra(dialog.getRows(), dialog.getColumns(), dialog.getFloors(), null);
+            hra = new Hra(dialog.getRows(), dialog.getColumns(), dialog.getFloors(), null, cmTools);
             vBox.getChildren().clear();
             for(int i = 0; i < dialog.getFloors(); i++){
                 Button button = new Button(String.valueOf(i+1));
@@ -102,7 +115,7 @@ public class Maze extends Application{
             string.add(scanner.next());
         }
         gridPane.getChildren().clear();
-        hra = new Hra(rows, columns, floor, string);
+        hra = new Hra(rows, columns, floor, string, cmTools);
         
         vBox.getChildren().clear();
         for(int i = 0; i < floor; i++){
@@ -126,29 +139,85 @@ public class Maze extends Application{
         scanner.close();
     }
     
-    private void clearMI(){
-        search.setDisable(false);
-        addWall.setDisable(false);
-        addRandomWalls.setDisable(false);
-        removeWall.setDisable(false);
-        addShaft.setDisable(false);
-        addShaftToNextFloor.setDisable(false);
-        removeShaft.setDisable(false);
-        removeShaftFromFloor.setDisable(false);
-        resetVisited.setDisable(false);
-        resetFloor.setDisable(false);
+    private void createCM(){
+        cmTools = new ContextMenu();
+        cmiSearch = new MenuItem("Search");
+        cmiSearch.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setSearch();
+            cmiSearch.setDisable(true);
+            search.setDisable(true);
+        });
+        cmiAddWall = new MenuItem("Add Wall");
+        cmiAddWall.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setAddWall();
+            cmiAddWall.setDisable(true);
+            addWall.setDisable(true);
+        });
+        cmiAddRandomWalls = new MenuItem("Add Random Wall");
+        cmiAddRandomWalls.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setAddRandomWalls();
+            cmiAddRandomWalls.setDisable(true);
+            addRandomWalls.setDisable(true);
+        });
+        cmiRemoveWall = new MenuItem("Remove Wall");
+        cmiRemoveWall.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setRemoveWall();
+            cmiRemoveWall.setDisable(true);
+            removeWall.setDisable(true);
+        });
+        cmiAddShaft = new MenuItem("Add Shaft");
+        cmiAddShaft.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setAddShaft();
+            cmiAddShaft.setDisable(true);
+            addShaft.setDisable(true);
+        });
+        cmiAddShaftToNextFloor = new MenuItem("Add Shaft To Next Floor");
+        cmiAddShaftToNextFloor.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setAddShaftToNextFloor();
+            cmiAddShaftToNextFloor.setDisable(true);
+            addShaftToNextFloor.setDisable(true);
+        });
+        cmiRemoveShaft = new MenuItem("Remove Shaft");
+        cmiRemoveShaft.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setRemoveShaft();
+            cmiRemoveShaft.setDisable(true);
+            removeShaft.setDisable(true);
+        });
+        cmiRemoveShaftFromFloor = new MenuItem("Remove Shaft From Floor");
+        cmiRemoveShaftFromFloor.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setRemoveShaftFromFloor();
+            cmiRemoveShaftFromFloor.setDisable(true);
+            removeShaftFromFloor.setDisable(true);
+        });
+        cmiResetVisited = new MenuItem("Reset Visited");
+        cmiResetVisited.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setResetVisited();
+            cmiResetVisited.setDisable(true);
+            resetVisited.setDisable(true);
+        });
+        cmiResetFloor = new MenuItem("Reset Floor");
+        cmiResetFloor.setOnAction((ActionEvent) -> {
+            clear();
+            hra.setResetFloor();
+            cmiResetFloor.setDisable(true);
+            resetFloor.setDisable(true);
+        });
+        cmTools.getItems().addAll(cmiSearch, cmiAddWall, cmiAddRandomWalls, 
+                cmiRemoveWall, cmiAddShaft, cmiAddShaftToNextFloor, cmiRemoveShaft, 
+                cmiRemoveShaftFromFloor, cmiResetVisited, cmiResetFloor);
     }
     
-    @Override
-    public void start(Stage stage){
-        primaryStage = stage;
-        border = new BorderPane();
-        gridPane = new GridPane();
-        vBox = new VBox();
-        border.setCenter(gridPane);
-        border.setRight(vBox);
-        
-        MenuBar menuBar = new MenuBar();
+    private void createM(){
+        menuBar = new MenuBar();
         game = new Menu("Game");
         newG = new MenuItem("New");
         newG.setOnAction((ActionEvent) -> {
@@ -193,62 +262,72 @@ public class Maze extends Application{
         tools = new Menu("Tools");
         search = new MenuItem("Search");
         search.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setSearch();
+            cmiSearch.setDisable(true);
             search.setDisable(true);
         });
         addWall = new MenuItem("Add Wall");
         addWall.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setAddWall();
+            cmiAddWall.setDisable(true);
             addWall.setDisable(true);
         });
         addRandomWalls = new MenuItem("Add Random Wall");
         addRandomWalls.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setAddRandomWalls();
+            cmiAddRandomWalls.setDisable(true);
             addRandomWalls.setDisable(true);
         });
         removeWall = new MenuItem("Remove Wall");
         removeWall.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setRemoveWall();
+            cmiRemoveWall.setDisable(true);
             removeWall.setDisable(true);
         });
         addShaft = new MenuItem("Add Shaft");
         addShaft.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setAddShaft();
+            cmiAddShaft.setDisable(true);
             addShaft.setDisable(true);
         });
         addShaftToNextFloor = new MenuItem("Add Shaft To Next Floor");
         addShaftToNextFloor.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setAddShaftToNextFloor();
+            cmiAddShaftToNextFloor.setDisable(true);
             addShaftToNextFloor.setDisable(true);
         });
         removeShaft = new MenuItem("Remove Shaft");
         removeShaft.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setRemoveShaft();
+            cmiRemoveShaft.setDisable(true);
             removeShaft.setDisable(true);
         });
         removeShaftFromFloor = new MenuItem("Remove Shaft From Floor");
         removeShaftFromFloor.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setRemoveShaftFromFloor();
+            cmiRemoveShaftFromFloor.setDisable(true);
             removeShaftFromFloor.setDisable(true);
         });
         resetVisited = new MenuItem("Reset Visited");
         resetVisited.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setResetVisited();
+            cmiResetVisited.setDisable(true);
             resetVisited.setDisable(true);
         });
         resetFloor = new MenuItem("Reset Floor");
         resetFloor.setOnAction((ActionEvent) -> {
-            clearMI();
+            clear();
             hra.setResetFloor();
+            cmiResetFloor.setDisable(true);
             resetFloor.setDisable(true);
         });
         tools.getItems().addAll(search, addWall, addRandomWalls, 
@@ -256,11 +335,57 @@ public class Maze extends Application{
                 removeShaftFromFloor, resetVisited, resetFloor);
         tools.setDisable(true);
         menuBar.getMenus().addAll(game, tools);
-        border.setTop(menuBar);
+    }
+    
+    private void clear(){
+        search.setDisable(false);
+        cmiSearch.setDisable(false);    
+            
+        addWall.setDisable(false);
+        cmiAddWall.setDisable(false);
         
+        addRandomWalls.setDisable(false);
+        cmiAddRandomWalls.setDisable(false);
+        
+        removeWall.setDisable(false);
+        cmiRemoveWall.setDisable(false);
+        
+        addShaft.setDisable(false);
+        cmiAddShaft.setDisable(false);
+        
+        addShaftToNextFloor.setDisable(false);
+        cmiAddShaftToNextFloor.setDisable(false);
+        
+        removeShaft.setDisable(false);
+        cmiRemoveShaft.setDisable(false);
+        
+        removeShaftFromFloor.setDisable(false);
+        cmiRemoveShaftFromFloor.setDisable(false);
+        
+        resetVisited.setDisable(false);
+        cmiResetVisited.setDisable(false);
+        
+        resetFloor.setDisable(false);
+        cmiResetFloor.setDisable(false);
+    }
+    
+    @Override
+    public void start(Stage stage){
+        primaryStage = stage;
+        border = new BorderPane();
+        gridPane = new GridPane();
+        vBox = new VBox();
+        
+        createCM();
+        createM();
+        
+        border.setCenter(gridPane);
+        border.setRight(vBox);
+        border.setTop(menuBar);
         
         scene = new Scene(border);
         scene.getStylesheets().add("maze/resources/styly.css");
+        
         primaryStage.setScene(scene);
         primaryStage.setTitle("Maze");
         primaryStage.sizeToScene();
