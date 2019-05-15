@@ -35,18 +35,30 @@ public class Maze extends Application{
     private MenuItem removeShaftFromFloor;
     private MenuItem resetVisited;
     private MenuItem resetFloor;
+    private MenuItem addFloor;
+    private MenuItem removeFloor;
+    private MenuItem addRow;
+    private MenuItem removeRow;
+    private MenuItem addColumn;
+    private MenuItem removeColumn;
     
     private ContextMenu cmTools;
-    private MenuItem cmiSearch;
-    private MenuItem cmiAddWall;
-    private MenuItem cmiAddRandomWalls;
-    private MenuItem cmiRemoveWall;
-    private MenuItem cmiAddShaft;
-    private MenuItem cmiAddShaftToNextFloor;
-    private MenuItem cmiRemoveShaft;
-    private MenuItem cmiRemoveShaftFromFloor;
-    private MenuItem cmiResetVisited;
-    private MenuItem cmiResetFloor;
+    private MenuItem cmSearch;
+    private MenuItem cmAddWall;
+    private MenuItem cmAddRandomWalls;
+    private MenuItem cmRemoveWall;
+    private MenuItem cmAddShaft;
+    private MenuItem cmAddShaftToNextFloor;
+    private MenuItem cmRemoveShaft;
+    private MenuItem cmRemoveShaftFromFloor;
+    private MenuItem cmResetVisited;
+    private MenuItem cmResetFloor;
+    private MenuItem cmAddFloor;
+    private MenuItem cmRemoveFloor;
+    private MenuItem cmAddRow;
+    private MenuItem cmRemoveRow;
+    private MenuItem cmAddColumn;
+    private MenuItem cmRemoveColumn;
     
     public void newGame(){
         NewGame dialog = new NewGame();
@@ -55,25 +67,28 @@ public class Maze extends Application{
             hra = new Hra(dialog.getRows(), dialog.getColumns(), dialog.getFloors(), null, cmTools);
             vBox.getChildren().clear();
             for(int i = 0; i < dialog.getFloors(); i++){
-                Button button = new Button(String.valueOf(i+1));
-                int index = i;
-                button.setOnAction((ActionEvent) -> {
-                    for(int j = 0; j < vBox.getChildren().size(); j++){
-                        vBox.getChildren().get(j).setDisable(false);
-                    }      
-                    hra.getFloorToGrid(index, gridPane);
-                    primaryStage.sizeToScene();
-                    button.setDisable(true);
-                });
-                if(i == 0){
-                    button.setDisable(true);
-                }
-                vBox.getChildren().add(button);
+                addButton(i);
             }
             hra.getFloorToGrid(0, gridPane);
             tools.setDisable(false);
             saveG.setDisable(false);
         }
+    }
+    
+    private void addButton(int floor){
+        Button button = new Button(String.valueOf(floor+1));
+        button.setOnAction((ActionEvent) -> {
+            for(int j = 0; j < vBox.getChildren().size(); j++){
+                vBox.getChildren().get(j).setDisable(false);
+            }      
+            hra.getFloorToGrid(floor, gridPane);
+            primaryStage.sizeToScene();
+            button.setDisable(true);
+        });
+        if(floor == 0){
+            button.setDisable(true);
+        }
+        vBox.getChildren().add(button);
     }
     
     private FileChooser prepareFileChooser() {
@@ -139,84 +154,191 @@ public class Maze extends Application{
         scanner.close();
     }
     
-    private void createCM(){
-        cmTools = new ContextMenu();
-        cmiSearch = new MenuItem("Search");
-        cmiSearch.setOnAction((ActionEvent) -> {
+    private void createCMenu(){
+        cmSearch = new MenuItem("Search");
+        cmSearch.setOnAction((ActionEvent) -> {
             clear();
             hra.setSearch();
-            cmiSearch.setDisable(true);
+            cmSearch.setDisable(true);
             search.setDisable(true);
         });
-        cmiAddWall = new MenuItem("Add Wall");
-        cmiAddWall.setOnAction((ActionEvent) -> {
+        cmAddWall = new MenuItem("Add Wall");
+        cmAddWall.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddWall();
-            cmiAddWall.setDisable(true);
+            cmAddWall.setDisable(true);
             addWall.setDisable(true);
         });
-        cmiAddRandomWalls = new MenuItem("Add Random Wall");
-        cmiAddRandomWalls.setOnAction((ActionEvent) -> {
+        cmAddRandomWalls = new MenuItem("Add Random Wall");
+        cmAddRandomWalls.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddRandomWalls();
-            cmiAddRandomWalls.setDisable(true);
+            cmAddRandomWalls.setDisable(true);
             addRandomWalls.setDisable(true);
         });
-        cmiRemoveWall = new MenuItem("Remove Wall");
-        cmiRemoveWall.setOnAction((ActionEvent) -> {
+        cmRemoveWall = new MenuItem("Remove Wall");
+        cmRemoveWall.setOnAction((ActionEvent) -> {
             clear();
             hra.setRemoveWall();
-            cmiRemoveWall.setDisable(true);
+            cmRemoveWall.setDisable(true);
             removeWall.setDisable(true);
         });
-        cmiAddShaft = new MenuItem("Add Shaft");
-        cmiAddShaft.setOnAction((ActionEvent) -> {
+        cmAddShaft = new MenuItem("Add Shaft");
+        cmAddShaft.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddShaft();
-            cmiAddShaft.setDisable(true);
+            cmAddShaft.setDisable(true);
             addShaft.setDisable(true);
         });
-        cmiAddShaftToNextFloor = new MenuItem("Add Shaft To Next Floor");
-        cmiAddShaftToNextFloor.setOnAction((ActionEvent) -> {
+        cmAddShaftToNextFloor = new MenuItem("Add Shaft To Next Floor");
+        cmAddShaftToNextFloor.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddShaftToNextFloor();
-            cmiAddShaftToNextFloor.setDisable(true);
+            cmAddShaftToNextFloor.setDisable(true);
             addShaftToNextFloor.setDisable(true);
         });
-        cmiRemoveShaft = new MenuItem("Remove Shaft");
-        cmiRemoveShaft.setOnAction((ActionEvent) -> {
+        cmRemoveShaft = new MenuItem("Remove Shaft");
+        cmRemoveShaft.setOnAction((ActionEvent) -> {
             clear();
             hra.setRemoveShaft();
-            cmiRemoveShaft.setDisable(true);
+            cmRemoveShaft.setDisable(true);
             removeShaft.setDisable(true);
         });
-        cmiRemoveShaftFromFloor = new MenuItem("Remove Shaft From Floor");
-        cmiRemoveShaftFromFloor.setOnAction((ActionEvent) -> {
+        cmRemoveShaftFromFloor = new MenuItem("Remove Shaft From Floor");
+        cmRemoveShaftFromFloor.setOnAction((ActionEvent) -> {
             clear();
             hra.setRemoveShaftFromFloor();
-            cmiRemoveShaftFromFloor.setDisable(true);
+            cmRemoveShaftFromFloor.setDisable(true);
             removeShaftFromFloor.setDisable(true);
         });
-        cmiResetVisited = new MenuItem("Reset Visited");
-        cmiResetVisited.setOnAction((ActionEvent) -> {
+        cmResetVisited = new MenuItem("Reset Visited");
+        cmResetVisited.setOnAction((ActionEvent) -> {
             clear();
             hra.setResetVisited();
-            cmiResetVisited.setDisable(true);
+            cmResetVisited.setDisable(true);
             resetVisited.setDisable(true);
         });
-        cmiResetFloor = new MenuItem("Reset Floor");
-        cmiResetFloor.setOnAction((ActionEvent) -> {
+        cmResetFloor = new MenuItem("Reset Floor");
+        cmResetFloor.setOnAction((ActionEvent) -> {
             clear();
             hra.setResetFloor();
-            cmiResetFloor.setDisable(true);
+            cmResetFloor.setDisable(true);
             resetFloor.setDisable(true);
         });
-        cmTools.getItems().addAll(cmiSearch, cmiAddWall, cmiAddRandomWalls, 
-                cmiRemoveWall, cmiAddShaft, cmiAddShaftToNextFloor, cmiRemoveShaft, 
-                cmiRemoveShaftFromFloor, cmiResetVisited, cmiResetFloor);
+        cmAddFloor = new MenuItem("Add Floor");
+        cmAddFloor.setOnAction((ActionEvent) -> {
+            clear();
+            int floor = hra.addFloor(cmTools);
+            if(floor != -1){
+                addButton(floor);
+                primaryStage.sizeToScene();
+            } else { 
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa pridat dalsie poschodie, budova by to nezvladla");
+                alert.showAndWait();
+            }
+        });
+        cmRemoveFloor = new MenuItem("Remove Floor");
+        cmRemoveFloor.setOnAction((ActionEvent) -> {
+            clear();
+            int floor = hra.removeFloor();
+            if(floor != -1){
+                if(vBox.getChildren().get(floor).isDisabled()){
+                    hra.getFloorToGrid(floor-1, gridPane);
+                    vBox.getChildren().get(floor-1).setDisable(true);
+                }
+                vBox.getChildren().remove(floor);
+                primaryStage.sizeToScene();
+            } else { 
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa zburat dalsie poschodie lebo dalsie uz nie je");
+                alert.showAndWait();
+            }
+        });
+        cmAddRow = new MenuItem("Add Row");
+        cmAddRow.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.addRow(cmTools)){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zvacsit (v dlzke)");
+                alert.showAndWait();
+            }
+        });
+        cmRemoveRow = new MenuItem("Remove Row");
+        cmRemoveRow.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.removeRow()){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zmensit (v dlzke)");
+                alert.showAndWait();
+            }
+        });
+        cmAddColumn = new MenuItem("Add Column");
+        cmAddColumn.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.addColumn(cmTools)){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zvacsit (v sirke)");
+                alert.showAndWait();
+            }
+        });
+        cmRemoveColumn = new MenuItem("Remove Column");
+        cmRemoveColumn.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.removeColumn()){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zmensit (v sirke)");
+                alert.showAndWait();
+            }
+        });
+        cmTools = new ContextMenu();
+        cmTools.getItems().addAll(cmSearch, cmAddWall, cmAddRandomWalls, 
+                cmRemoveWall, cmAddShaft, cmAddShaftToNextFloor, cmRemoveShaft, 
+                cmRemoveShaftFromFloor, cmAddFloor, cmRemoveFloor, cmAddRow,
+                cmRemoveRow, cmAddColumn, cmRemoveColumn, cmResetVisited, cmResetFloor);
     }
     
-    private void createM(){
+    private void createMenus(){
         menuBar = new MenuBar();
         game = new Menu("Game");
         newG = new MenuItem("New");
@@ -264,109 +386,216 @@ public class Maze extends Application{
         search.setOnAction((ActionEvent) -> {
             clear();
             hra.setSearch();
-            cmiSearch.setDisable(true);
             search.setDisable(true);
+            cmSearch.setDisable(true);
         });
         addWall = new MenuItem("Add Wall");
         addWall.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddWall();
-            cmiAddWall.setDisable(true);
             addWall.setDisable(true);
+            cmAddWall.setDisable(true);
         });
         addRandomWalls = new MenuItem("Add Random Wall");
         addRandomWalls.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddRandomWalls();
-            cmiAddRandomWalls.setDisable(true);
             addRandomWalls.setDisable(true);
+            cmAddRandomWalls.setDisable(true);
         });
         removeWall = new MenuItem("Remove Wall");
         removeWall.setOnAction((ActionEvent) -> {
             clear();
             hra.setRemoveWall();
-            cmiRemoveWall.setDisable(true);
             removeWall.setDisable(true);
+            cmRemoveWall.setDisable(true);
         });
         addShaft = new MenuItem("Add Shaft");
         addShaft.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddShaft();
-            cmiAddShaft.setDisable(true);
             addShaft.setDisable(true);
+            cmAddShaft.setDisable(true);
+
         });
         addShaftToNextFloor = new MenuItem("Add Shaft To Next Floor");
         addShaftToNextFloor.setOnAction((ActionEvent) -> {
             clear();
             hra.setAddShaftToNextFloor();
-            cmiAddShaftToNextFloor.setDisable(true);
             addShaftToNextFloor.setDisable(true);
+            cmAddShaftToNextFloor.setDisable(true);
         });
         removeShaft = new MenuItem("Remove Shaft");
         removeShaft.setOnAction((ActionEvent) -> {
             clear();
             hra.setRemoveShaft();
-            cmiRemoveShaft.setDisable(true);
             removeShaft.setDisable(true);
+            cmRemoveShaft.setDisable(true);
         });
         removeShaftFromFloor = new MenuItem("Remove Shaft From Floor");
         removeShaftFromFloor.setOnAction((ActionEvent) -> {
             clear();
             hra.setRemoveShaftFromFloor();
-            cmiRemoveShaftFromFloor.setDisable(true);
             removeShaftFromFloor.setDisable(true);
+            cmRemoveShaftFromFloor.setDisable(true);
         });
         resetVisited = new MenuItem("Reset Visited");
         resetVisited.setOnAction((ActionEvent) -> {
             clear();
             hra.setResetVisited();
-            cmiResetVisited.setDisable(true);
             resetVisited.setDisable(true);
+            cmResetVisited.setDisable(true);
         });
         resetFloor = new MenuItem("Reset Floor");
         resetFloor.setOnAction((ActionEvent) -> {
             clear();
             hra.setResetFloor();
-            cmiResetFloor.setDisable(true);
             resetFloor.setDisable(true);
+            cmResetFloor.setDisable(true);
         });
+        addFloor = new MenuItem("Add Floor");
+        addFloor.setOnAction((ActionEvent) -> {
+            clear();
+            int floor = hra.addFloor(cmTools);
+            if(floor != -1){
+                addButton(floor);
+                primaryStage.sizeToScene();
+            } else { 
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa pridat dalsie poschodie, budova by to nezvladla");
+                alert.showAndWait();
+            }
+        });
+        removeFloor = new MenuItem("Remove Floor");
+        removeFloor.setOnAction((ActionEvent) -> {
+            clear();
+            int floor = hra.removeFloor();
+            if(floor != -1){
+                if(vBox.getChildren().get(floor).isDisabled()){
+                    hra.getFloorToGrid(floor-1, gridPane);
+                    vBox.getChildren().get(floor-1).setDisable(true);
+                }
+                vBox.getChildren().remove(floor);
+                primaryStage.sizeToScene();
+            } else { 
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa zburat dalsie poschodie lebo dalsie uz nie je");
+                alert.showAndWait();
+            }
+        });
+        addRow = new MenuItem("Add Row");
+        addRow.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.addRow(cmTools)){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zvacsit (v dlzke)");
+                alert.showAndWait();
+            }
+        });
+        removeRow = new MenuItem("Remove Row");
+        removeRow.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.removeRow()){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zmensit (v dlzke)");
+                alert.showAndWait();
+            }
+        });
+        addColumn = new MenuItem("Add Column");
+        addColumn.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.addColumn(cmTools)){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zvacsit (v sirke)");
+                alert.showAndWait();
+            }
+        });
+        removeColumn = new MenuItem("Remove Column");
+        removeColumn.setOnAction((ActionEvent) -> {
+            clear();
+            if(hra.removeColumn()){
+                for(int i = 0; i < vBox.getChildren().size(); i++){
+                    if(vBox.getChildren().get(i).isDisabled()){
+                        hra.getFloorToGrid(i, gridPane);
+                        primaryStage.sizeToScene();
+                    }
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Hups");
+                alert.setHeaderText(null);
+                alert.setContentText("Neda sa budovu zmensit (v sirke)");
+                alert.showAndWait();
+            }
+        });
+        
         tools.getItems().addAll(search, addWall, addRandomWalls, 
                 removeWall, addShaft, addShaftToNextFloor, removeShaft, 
-                removeShaftFromFloor, resetVisited, resetFloor);
+                removeShaftFromFloor, addFloor, removeFloor, addRow,
+                removeRow, addColumn, removeColumn, resetVisited, resetFloor);
         tools.setDisable(true);
         menuBar.getMenus().addAll(game, tools);
+        
+        cmTools = new ContextMenu();
+        cmTools.getItems().addAll(search, addWall, addRandomWalls, 
+                removeWall, addShaft, addShaftToNextFloor, removeShaft, 
+                removeShaftFromFloor, addFloor, removeFloor, addRow,
+                removeRow, addColumn, removeColumn, resetVisited, resetFloor);
     }
     
     private void clear(){
         search.setDisable(false);
-        cmiSearch.setDisable(false);    
-            
         addWall.setDisable(false);
-        cmiAddWall.setDisable(false);
-        
         addRandomWalls.setDisable(false);
-        cmiAddRandomWalls.setDisable(false);
-        
         removeWall.setDisable(false);
-        cmiRemoveWall.setDisable(false);
-        
         addShaft.setDisable(false);
-        cmiAddShaft.setDisable(false);
-        
         addShaftToNextFloor.setDisable(false);
-        cmiAddShaftToNextFloor.setDisable(false);
-        
         removeShaft.setDisable(false);
-        cmiRemoveShaft.setDisable(false);
-        
         removeShaftFromFloor.setDisable(false);
-        cmiRemoveShaftFromFloor.setDisable(false);
-        
         resetVisited.setDisable(false);
-        cmiResetVisited.setDisable(false);
-        
         resetFloor.setDisable(false);
-        cmiResetFloor.setDisable(false);
+        
+        cmSearch.setDisable(false);
+        cmAddWall.setDisable(false);
+        cmAddRandomWalls.setDisable(false);
+        cmRemoveWall.setDisable(false);
+        cmAddShaft.setDisable(false);
+        cmAddShaftToNextFloor.setDisable(false);
+        cmRemoveShaft.setDisable(false);
+        cmRemoveShaftFromFloor.setDisable(false);
+        cmResetVisited.setDisable(false);
+        cmResetFloor.setDisable(false);
     }
     
     @Override
@@ -376,8 +605,8 @@ public class Maze extends Application{
         gridPane = new GridPane();
         vBox = new VBox();
         
-        createCM();
-        createM();
+        createMenus();
+        createCMenu();
         
         border.setCenter(gridPane);
         border.setRight(vBox);
