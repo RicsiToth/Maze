@@ -9,7 +9,7 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 
 public class Maze extends Application{
-
+    /* Premenné, ktoré sú hlavnou  súčasťou aplikácie*/
     private Stage primaryStage;
     private BorderPane border;
     private VBox vBox;
@@ -18,12 +18,14 @@ public class Maze extends Application{
     private Hra hra;
     private MenuBar menuBar;
     
+    /* Menu pre hlavné možnosti*/
     private Menu game; 
     private MenuItem newG;
     private MenuItem saveG;
     private MenuItem openG;
     private MenuItem exitG;
     
+    /*Menu, pre nástroje */
     private Menu tools;
     private MenuItem search;
     private MenuItem addWall;
@@ -42,6 +44,7 @@ public class Maze extends Application{
     private MenuItem addColumn;
     private MenuItem removeColumn;
     
+    /*Kontextové menu nástrojov*/
     private ContextMenu cmTools;
     private MenuItem cmSearch;
     private MenuItem cmAddWall;
@@ -60,12 +63,18 @@ public class Maze extends Application{
     private MenuItem cmAddColumn;
     private MenuItem cmRemoveColumn;
     
+    /**Metóda, ktorá spustí novú hru ak si z Menu vyberieme New Game. Spustí sa
+     * nové okno, v ktorom sa zadávajú údaje na vytvorenie hry(riadky, stĺlpce, 
+     * poschodia). Potom sa vytvorí hra a nasledne aj tlačítka na prepínanie 
+     * poschodí */
     public void newGame(){
         NewGame dialog = new NewGame();
         dialog.showNewGame();
+        //Kontrola si sa okno nezatvorilo krížikom
         if(dialog.isCreated()){
             hra = new Hra(dialog.getRows(), dialog.getColumns(), dialog.getFloors(), null, cmTools);
             vBox.getChildren().clear();
+            //Pre každé poschodie sa zavolá metóda addButton
             for(int i = 0; i < dialog.getFloors(); i++){
                 addButton(i);
             }
@@ -75,6 +84,10 @@ public class Maze extends Application{
         }
     }
     
+    /** Pomocná metóda na vytvorenie jednotlivých tlačítok. V ktorom sa nastaví
+     * aby po každom stlačení tlačítka zistí ktore tlačítko bolo zvolene a nastaví
+     * aby nebolo. Nasledne sa nastaví gridpane na dané poschodie, ktoré chceme a
+     * nastaví sa tlačítka disable TRUE */
     private void addButton(int floor){
         Button button = new Button(String.valueOf(floor+1));
         button.setOnAction((ActionEvent) -> {
@@ -91,6 +104,7 @@ public class Maze extends Application{
         vBox.getChildren().add(button);
     }
     
+    /**Funkcia, ktorá pripraví FileChooser*/
     private FileChooser prepareFileChooser() {
         FileChooser fileChooser = new FileChooser();                                
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));  
@@ -100,6 +114,8 @@ public class Maze extends Application{
         return fileChooser;                                                        
     }
     
+    /**Táto metóda spustí FileChooser na vybratie miesta uloženia a vracia 
+     * subor ktorý sme pomenovali pri ukladaní*/
     private File chooseFileToSave() {
         FileChooser fileChooser = prepareFileChooser();
         fileChooser.setTitle("Ulozit");
@@ -107,12 +123,15 @@ public class Maze extends Application{
         return file;
     }
     
+    /**Metóda ktorá ukladá aktuálnu hru na miesto, ktoré sme vybrali*/
     private void save() throws IOException{
         PrintStream out = new PrintStream(chooseFileToSave());
         hra.save(out);
         out.close();
     }
     
+    /**Táto metóda spustí FileChooser, kde vyberieme subor ktorý chceme otvorit 
+     * a vráti názov toho súboru*/
     private File chooseFileToOpen() {
         FileChooser fileChooser = prepareFileChooser();
         fileChooser.setTitle("Otvorit");
@@ -120,6 +139,9 @@ public class Maze extends Application{
         return file;
     }
     
+    /**Metóda ktorá načíta z vybratého súboru počet riadkov, stĺpcov a poschodí,
+     * potom vytvorí pole stringov do ktorého sa načítajú jednotlivé políčka
+     * a pošle sa to na vytvorenie hry a vytvorenie tlačítok.*/
     private void open() throws IOException{
         Scanner scanner = new Scanner(chooseFileToOpen());
         ArrayList<String> string = new ArrayList<>();
@@ -134,26 +156,13 @@ public class Maze extends Application{
         
         vBox.getChildren().clear();
         for(int i = 0; i < floor; i++){
-            Button button = new Button(String.valueOf(i+1));
-            int index = i;
-            button.setOnAction((ActionEvent) -> {
-                for(int j = 0; j < vBox.getChildren().size(); j++){
-                    vBox.getChildren().get(j).setDisable(false);
-                }      
-                hra.getFloorToGrid(index, gridPane);
-                primaryStage.sizeToScene();
-                button.setDisable(true);
-            });
-            if(i == 0){
-                button.setDisable(true);
-            }
-            vBox.getChildren().add(button);
+            addButton(i);
         }
         hra.getFloorToGrid(0, gridPane);
-    
         scanner.close();
     }
     
+    /**Metóda ktorá vytvorí vsetky Itemy do ContextMenu*/
     private void createCMenu(){
         cmSearch = new MenuItem("Search");
         cmSearch.setOnAction((ActionEvent) -> {
@@ -338,6 +347,7 @@ public class Maze extends Application{
                 cmRemoveRow, cmAddColumn, cmRemoveColumn, cmResetVisited, cmResetFloor);
     }
     
+    /**Metóda, ktorá vytvorí všetky Itemy pre zobrazenie Menu*/
     private void createMenus(){
         menuBar = new MenuBar();
         game = new Menu("Game");
@@ -574,6 +584,8 @@ public class Maze extends Application{
                 removeRow, addColumn, removeColumn, resetVisited, resetFloor);
     }
     
+    /**Metóda, ktorá slúži na nastavenie vlastnosti Disable všetkých Itemov z 
+     * ContextMenu a Menu na False*/
     private void clear(){
         search.setDisable(false);
         addWall.setDisable(false);
