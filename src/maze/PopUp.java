@@ -5,7 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 
-
+/** Okno nové ktoré sa otvorí pri zvolení New Game. Užívatel zadá parametre na
+ * vytvorenie novej hry a ak sú správne tak sa uložia a nastaví created na TRUE*/
 class NewGame{
     
     private Stage newGameStage;
@@ -32,10 +33,10 @@ class NewGame{
             newGameStage.close();
         });
         
-        labelRows = new Label("Rows (3-100)");
+        labelRows = new Label("Rows (3-35)");
         textRows = new TextField();
         
-        labelColumns = new Label("Columns (3-100)");
+        labelColumns = new Label("Columns (3-35)");
         textColumns = new TextField();
         
         labelFloors = new Label("Floors (1-10)");
@@ -57,13 +58,14 @@ class NewGame{
         vBox.setMinWidth(300);
         
         Scene newGameScene = new Scene(vBox);
+        newGameScene.getStylesheets().add("maze/resources/styly2.css");
         newGameStage.setScene(newGameScene);
         newGameStage.sizeToScene();
     }
     
     private boolean filledOut(){
-        if(textRows.getLength() != 0 && Integer.parseInt(textRows.getText()) > 2 && Integer.parseInt(textRows.getText()) < 101){
-            if(textColumns.getLength() != 0 && Integer.parseInt(textColumns.getText()) > 2 && Integer.parseInt(textColumns.getText()) < 101){
+        if(textRows.getLength() != 0 && Integer.parseInt(textRows.getText()) > 2 && Integer.parseInt(textRows.getText()) < 36){
+            if(textColumns.getLength() != 0 && Integer.parseInt(textColumns.getText()) > 2 && Integer.parseInt(textColumns.getText()) < 36){
                 if(textFloors.getLength() != 0 && Integer.parseInt(textFloors.getText()) > 0 && Integer.parseInt(textFloors.getText()) < 11){
                     return true;
                 }
@@ -93,6 +95,8 @@ class NewGame{
     }
 }
 
+/** Okno nové ktoré sa otvorí pri zvolení rozmiestenia náhodných stien. Užívatel 
+ * zadá počet stien a ak je pod počtom max tak sa uloži a nastaví created na TRUE*/
 class NumberOfRandomWalls{
     private Stage randomStage;
     private VBox vBox;
@@ -128,12 +132,13 @@ class NumberOfRandomWalls{
         vBox.setMinWidth(300);
         
         Scene randomScene = new Scene(vBox);
+        randomScene.getStylesheets().add("maze/resources/styly2.css");
         randomStage.setScene(randomScene);
         randomStage.sizeToScene();
     }
     
     private boolean filledOut(int rows, int columns){
-        if(textNum.getLength() != 0 && Integer.parseInt(textNum.getText()) > 0 && Integer.parseInt(textNum.getText()) < rows*columns){
+        if(textNum.getLength() != 0 && Integer.parseInt(textNum.getText()) > 0 && Integer.parseInt(textNum.getText()) < (rows*columns)+1){
             return true;
         }           
         return false;
