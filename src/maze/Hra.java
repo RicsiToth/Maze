@@ -8,12 +8,22 @@ import javafx.scene.layout.*;
 
 public class Hra {
     
+    /**Premenná, ktorá má uložené počet riadkov*/
     private int rows;
+    
+    /**Premenná, ktorá má uložené počet stĺpcov*/
     private int columns;
+    
+    /**Premenná, ktorá má uložené počet poschodí*/
     private int floors;
+    
+    /**Trojrozmerné pole v ktorom sú uložené jednotlivé políčka*/
     private ArrayList<ArrayList<ArrayList<Label>>> labels;
+    
+    /** Premenná, ktorá obsahuje aktuálnu zvolenú funkciu*/
     private SelectedTool status;
     
+    /** Enum v ktorom su definované názvy jednotlivých funkcii*/
     private enum SelectedTool{
         SEARCH,
         ADDWALL,
@@ -28,13 +38,17 @@ public class Hra {
         NOTHING,
     }
     
+    
+    /**Konštruktor v ktorom sa vykonajú všetky potrebne operácie na vytvorenie hry*/
     public Hra(int rows, int columns, int floors, ArrayList<String> string, ContextMenu tools){
         this.rows = rows;
         this.columns = columns;
         this.floors = floors;
         labels = new ArrayList<>();
+        //Defaultne sa funkcia nastaví na nic
         status = SelectedTool.NOTHING;
         int index = 0;
+        //For cykli na vytvorenie všetkých políčok
         for(int i = 0; i < this.floors; i++){
             labels.add(new ArrayList<>());
             for(int j = 0; j < this.rows; j++){
@@ -42,12 +56,16 @@ public class Hra {
                 for(int k = 0; k < this.columns; k++){
                     Label label = new Label();
                     label.setContextMenu(tools);
+                    //Zistí či je pole Stringov ak hej načíta z nej ak nie nastaví sa Free 
                     if(string != null){
                         if(string.get(index).equals(".")){
+                            //Volné políčko
                             label.setId("Free");
                         } else if(string.get(index).equals("#")){
+                            //Stena
                             label.setId("Wall");
                         } else if(string.get(index).equals("V")){
+                            //Výtah    
                             label.setId("Shaft");
                         }
                         index++;
@@ -61,9 +79,13 @@ public class Hra {
         }
     }
     
+    /**Pomocná metóda na nastavenie jednotlivých operácii na dané políčko ktoré
+     * je definované riadkom stlpcom a poschodím*/
     private void createLabel(Label label, int floor, int row, int column){
         label.setOnMouseClicked((ActionEvent) -> {
+            //Uloží, ktoré tlačítko sme na myši stlačili
             MouseButton btn = ActionEvent.getButton();
+            //Odfiltrujeme len lavé tlačítko aby sa to nebilo s ContextMenu
             if(btn == MouseButton.PRIMARY){
                 switch(status){
                     case SEARCH:
@@ -108,7 +130,8 @@ public class Hra {
             }
         });
     }
-   
+    
+    /** Metóda, ktorá rekurzívne prehladáva celú plochu hry od zvoleného bodu*/
     private void colourIt(int floor, int row, int column){
         if(labels.get(floor).get(row).get(column).getId().equals("Visited")){
             return;
@@ -158,17 +181,21 @@ public class Hra {
         }
     }
     
+    /**Metóda ktorá vloží výtah na kazdé poschodie*/
     private void placeShaft(int row, int column){
         for(int i = 0; i < floors; i++){
             labels.get(i).get(row).get(column).setId("Shaft");
         }
     }
+    
+    /**Metóda, ktorá zmaže zvolený výťah z každého poschodia*/
     private void removeShaft(int row, int column){
          for(int i = 0; i < floors; i++){
             labels.get(i).get(row).get(column).setId("Free");
         }
     }
     
+    /**Metóda, ktorá vloží na zvolené a ďalšie poschodie výťah*/
     private void addShaftToNextFloor(int row, int column, int floor){
         if(floor+1 < floors){
             labels.get(floor).get(row).get(column).setId("Shaft");
@@ -176,6 +203,10 @@ public class Hra {
         }
     }
     
+    /**Metóda, ktorá vygeneruje N stien na danom poschodí náhodne rozmiestnené.
+     * Vznikne okno v ktorom používatel zadá počet stien ktoré chce rozmiestnit a
+     * nasledne sa rozmiestna nahodne ale ak sa nejaka stena chce vložit na miesto,
+     * kde je už stena tak sa tam vloži -> je to aby sa nezacyklilo*/
     private void generateWalls(int floor){
         NumberOfRandomWalls dialog = new NumberOfRandomWalls(rows, columns);
         dialog.showRandom();
@@ -195,6 +226,7 @@ public class Hra {
         }
     }
     
+    /**Metóda, ktorá vyprázdni cele poschodie*/
     private void resetFloor(int floor){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
@@ -203,6 +235,7 @@ public class Hra {
         }
     }
     
+    /** Metóda, ktorá obnoví navštívené políčka na prázdne*/
     private void resetVisited(){
         for(int i = 0; i < floors; i++){
             for(int j = 0; j < rows; j++){
@@ -215,6 +248,7 @@ public class Hra {
         }
     }
     
+    /**Metóda ktorá načíta políčka, ktoré sú na danom poschodí do gridPane*/
     public void getFloorToGrid(int floor, GridPane gridPane){
         gridPane.getChildren().clear();
         for(int i = 0; i < rows; i++){
@@ -224,6 +258,8 @@ public class Hra {
         }
     }
     
+    /**Metóda, ktorá uloží do súboru údaje o hre. Na prvý riadok => pocet riadkov, 
+     * počet stĺpcov, počet poschodí. NaďalŠie riadky sa vypíše hracia plocha.*/
     public void save(PrintStream out){
         out.print(rows + " " + columns + " " + floors);
         out.println();
@@ -245,47 +281,59 @@ public class Hra {
             out.println();
         }
     }
-        
+    
+    /**Metóda, ktorá nastaví funkciu vyhľadávanie*/
     public void setSearch(){
         status = SelectedTool.SEARCH;
     }
     
+    /**Metóda, ktorá nastaví funkciu pridaj stenu*/
     public void setAddWall(){
         status = SelectedTool.ADDWALL;
     }
     
+    /**Metóda, ktorá nastaví funkciu pridaj nahodne steny*/
     public void setAddRandomWalls(){
         status = SelectedTool.ADDRANDOMWALLS;
     }
     
+    /**Metóda, ktorá nastaví funkciu odstrán stenu*/
     public void setRemoveWall(){
         status = SelectedTool.REMOVEWALL;
     }
     
+    /**Metóda, ktorá nastaví funkciu pridaj výťah*/
     public void setAddShaft(){
         status = SelectedTool.ADDSHAFT;
     }
     
+    /**Metóda, ktorá nastaví funkciu pridaj výťah na ďalšie poschodie*/
     public void setAddShaftToNextFloor(){
         status = SelectedTool.ADDSHAFTTONEXTFLOOR;
     }
     
+    /**Metóda, ktorá nastaví funkciu odstráň výťah*/
     public void setRemoveShaft(){
         status = SelectedTool.REMOVESHAFT;
     }
     
+    /**Metóda, ktorá nastaví funkciu odstráň výťah s daného poschodia*/
     public void setRemoveShaftFromFloor(){
         status = SelectedTool.REMOVESHAFTFROMFLOOR;
     }
     
+    /**Metóda, ktorá nastaví funkciu reset navštívených*/
     public void setResetVisited(){
         status = SelectedTool.RESETVISITED;
     }
     
+    /**Metóda, ktorá nastaví funkciu reset poschodia*/
     public void setResetFloor(){
         status = SelectedTool.RESETFLOOR;
     }
     
+    /**Metóda, ktorá pridá ďalšie poschodie ak sa dá. V novom poschodí budú volné
+     * políčka */
     public int addFloor(ContextMenu tools){
         status = SelectedTool.NOTHING;
         if((floors+1) < 11){
@@ -307,6 +355,7 @@ public class Hra {
         }
     }
     
+    /**Metóda, ktorá odstráni najvyššie poschodie ak sa dá*/
     public int removeFloor(){
         status = SelectedTool.NOTHING;
         if(floors-1 > 0){
@@ -318,6 +367,8 @@ public class Hra {
         }
     }
     
+    /**Metóda, ktorá pridá ďaľší riadok na každé poschodie. Každý nový riadok 
+     * má voľné políčka */
     public boolean addRow(ContextMenu tools){
         status = SelectedTool.NOTHING;
         if(rows+1 < 101){
@@ -338,6 +389,7 @@ public class Hra {
         }
     }
     
+    /** Metóda, ktorá odstráni posledný riadok*/
     public boolean removeRow(){
         status = SelectedTool.NOTHING;
         if(rows-1 >= 3){
@@ -351,6 +403,8 @@ public class Hra {
         }
     }
     
+    /** Metóda, ktorá pridá nový stlpec na každé poschodie. V každom stĺpci sú
+     * políčka voľné */
     public boolean addColumn(ContextMenu tools){
         status = SelectedTool.NOTHING;
         if(columns+1 < 101){
@@ -370,6 +424,7 @@ public class Hra {
         }
     }
     
+    /**Metóda, ktorá odstráni posledný stĺpec*/
     public boolean removeColumn(){
         status = SelectedTool.NOTHING;
         if(columns-1 >= 3){
